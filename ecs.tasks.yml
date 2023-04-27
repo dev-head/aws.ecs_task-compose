@@ -1,0 +1,33 @@
+#
+# @NOTE removing a task from this config won't delete it, you need to put the state as "delete" and run the task script again.
+#
+# these are merged with each task, add key:value to a specific task if you want to change.
+# a tasks.environment value is used to also map to the global configuration here:
+# @param environment_vars adds global env vars to the task, they can be overridden by defining it in the task.
+# defining a "task_definition" will modify behavior and use that specific arn instead of getting the latest.
+environment:
+  prod:
+    event_bus: "default"
+    cluster_arn: "arn:aws:ecs:us-east-1:3333333333:cluster/example"
+    role_arn: "arn:aws:iam::3333333333:role/service-role/ecs_events_etl_task"
+    #task_definition: "arn:aws:ecs:us-east-1:3333333333:task-definition/example-scheduler-task:13"
+    task_definition_family: "example-scheduler-task"
+    task_group: "example-scheduler-task"
+    environment_vars:
+      example_key: "example value"
+
+#
+# @parm state: [disabled, enabled, delete]
+# @param cron: "rate(2 minutes)" or "rate(1 minute)" or "*/2 * * * *"
+#
+tasks:
+
+  - name: TestJob
+    description: "I am a test job; I test if we can make jobs."
+    state: disabled
+    cron: "rate(2 minutes)"
+    environment_vars:
+      TASK_NAMESPACE: "foo"
+      MODULE: test_job
+      TASK_CLASS: RunTestJob
+      Environment: prod
